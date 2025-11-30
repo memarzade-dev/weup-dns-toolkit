@@ -20,7 +20,7 @@ set -euo pipefail
 # ============================================================================
 
 readonly PROJECT_NAME="weup-dns-toolkit"
-readonly VERSION="2.0.0"
+readonly TOOLKIT_VERSION="2.0.0"
 
 # Installation paths
 readonly INSTALL_DIR="/opt/${PROJECT_NAME}"
@@ -174,7 +174,7 @@ print_header() {
     
     echo ""
     echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║         WeUp DNS Toolkit - Uninstaller v${VERSION}           ║"
+    echo "║         WeUp DNS Toolkit - Uninstaller v${TOOLKIT_VERSION}           ║"
     echo "╚════════════════════════════════════════════════════════════╝"
     echo ""
 }
@@ -241,7 +241,7 @@ print_success() {
 
 print_help() {
     cat << EOF
-WeUp DNS Toolkit Uninstaller v${VERSION}
+WeUp DNS Toolkit Uninstaller v${TOOLKIT_VERSION}
 
 Usage: sudo $0 [OPTIONS]
 
@@ -280,7 +280,7 @@ main() {
                 exit 0
                 ;;
             -v|--version)
-                echo "WeUp DNS Toolkit Uninstaller v${VERSION}"
+                echo "WeUp DNS Toolkit Uninstaller v${TOOLKIT_VERSION}"
                 exit 0
                 ;;
             *)

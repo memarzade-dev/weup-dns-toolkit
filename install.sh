@@ -19,7 +19,7 @@ set -euo pipefail
 # CONFIGURATION
 # ============================================================================
 
-readonly VERSION="2.0.0"
+readonly TOOLKIT_VERSION="2.0.0"
 readonly PROJECT_NAME="weup-dns-toolkit"
 readonly SCRIPT_NAME="dns_toolkit.sh"
 readonly DATASET_NAME="dns_dataset.json"
@@ -559,7 +559,7 @@ EOF
 main() {
     echo ""
     echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║       WeUp DNS Toolkit v${VERSION} - Installation            ║"
+    echo "║       WeUp DNS Toolkit v${TOOLKIT_VERSION} - Installation            ║"
     echo "╚════════════════════════════════════════════════════════════╝"
     echo ""
     
@@ -588,7 +588,7 @@ main() {
 # Handle arguments
 case "${1:-}" in
     -h|--help)
-        echo "WeUp DNS Toolkit Installer v${VERSION}"
+        echo "WeUp DNS Toolkit Installer v${TOOLKIT_VERSION}"
         echo ""
         echo "Usage: sudo $0 [OPTIONS]"
         echo ""
@@ -601,7 +601,7 @@ case "${1:-}" in
         exit 0
         ;;
     -v|--version)
-        echo "WeUp DNS Toolkit Installer v${VERSION}"
+        echo "WeUp DNS Toolkit Installer v${TOOLKIT_VERSION}"
         exit 0
         ;;
 esac

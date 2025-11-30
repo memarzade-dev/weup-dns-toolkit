@@ -20,6 +20,15 @@ WeUp DNS Toolkit is a production-ready DNS management solution designed for Ubun
 - **Thread-Safe Logging**: Concurrent-safe logging for all operations
 - **Comprehensive Testing**: Latency, success rate, and critical services testing
 
+## System Overview
+
+- Single-file core: `dns_toolkit.sh` provides CLI, interactive menu, testing, ranking, and application logic
+- Dataset-driven: `dns_dataset.json` lists providers, protocols, and test domains
+- Configuration: `/etc/weup-dns-toolkit/config.conf` controls behavior and thresholds
+- OS integration: Applies DNS via `systemd-resolved`, `NetworkManager`, or direct `resolv.conf`, then flushes caches
+- Automation: systemd `service` and `timer` enable periodic optimization
+- Safety: atomic writes, backups, and validation to prevent misconfiguration
+
 ## Quick Start
 
 ### Installation
@@ -31,6 +40,12 @@ cd weup-dns-toolkit
 
 # Install (requires root)
 sudo ./install.sh
+```
+
+Alternatively, run explicitly with Bash if the file is not executable:
+
+```bash
+sudo bash install.sh
 ```
 
 ### Basic Usage
@@ -100,6 +115,14 @@ Commands:
   --update             Update DNS dataset
   --info               Show system information
 ```
+
+### How It Works
+
+- Detects the DNS manager and system capabilities
+- Benchmarks selected providers using `dig` with timeouts against diverse domains
+- Computes success rate and average latency, ranks candidates, and applies the best
+- Creates a backup prior to changes and flushes caches for consistency
+- Persists the applied DNS for visibility and potential restoration
 
 ### Examples
 
@@ -189,6 +212,13 @@ AUTO_BACKUP=true
 FALLBACK_DNS="1.1.1.1 8.8.8.8"
 ```
 
+You can also override some paths and settings via environment variables at runtime:
+
+```bash
+# Example: write logs to a custom location for this run
+LOG_FILE=/tmp/weup-dns.log weup-dns --auto
+```
+
 ## Automatic Optimization
 
 Enable periodic DNS optimization using systemd:
@@ -206,6 +236,13 @@ sudo journalctl -u weup-dns-toolkit.service
 
 The timer runs every 6 hours by default, with a 5-minute random delay to prevent thundering herd.
 
+### System Integration Details
+
+- `systemd-resolved`: creates a managed configuration and restarts the resolver
+- `NetworkManager`: updates the active connection DNS and prevents auto DNS overrides
+- Fallback: writes `nameserver` entries to `/etc/resolv.conf` directly if the above are unavailable
+- Cache flushing: uses `resolvectl` or service restart depending on detected components
+
 ## File Locations
 
 | Path | Description |
@@ -216,6 +253,36 @@ The timer runs every 6 hours by default, with a 5-minute random delay to prevent
 | `/var/backups/weup-dns-toolkit/` | DNS backup files |
 | `/var/log/weup-dns-toolkit.log` | Log file |
 | `/usr/local/bin/weup-dns` | Symlink to main script |
+
+## Dataset Management
+
+- The toolkit can update the dataset from an upstream URL:
+
+```bash
+weup-dns --update
+```
+
+- You may add custom DNS entries in `config.conf` using the `CUSTOM_DNS` setting when needed.
+
+## Uninstallation
+
+Use the generated uninstaller to remove installed files and services:
+
+```bash
+sudo /opt/weup-dns-toolkit/uninstall.sh
+```
+
+Alternatively, from the cloned repository root:
+
+```bash
+sudo ./uninstall.sh
+```
+
+To completely purge preserved configuration and backups, follow the prompts or manually remove:
+
+```bash
+sudo rm -rf /etc/weup-dns-toolkit /var/backups/weup-dns-toolkit
+```
 
 ## Troubleshooting
 
@@ -271,6 +338,15 @@ sudo weup-dns --auto
 
 3. Check if using Iranian ISP (required for some DNS services)
 
+### Common Installation Issues
+
+- `sudo: ./install.sh: command not found`
+  - Ensure the file is executable: `chmod +x install.sh` or run `sudo bash install.sh`
+- Line ending issues (Windows clones)
+  - Convert to Unix line endings: `dos2unix *.sh`, or set `git config core.autocrlf false` before cloning
+- OS detection warnings
+  - The toolkit is designed for Ubuntu LTS; on other distros it falls back to safe operations and may prompt
+
 ## Development
 
 ### Running Tests
@@ -299,6 +375,14 @@ bash -n dns_toolkit.sh
 # Run shellcheck
 shellcheck dns_toolkit.sh install.sh
 ```
+
+### Architecture
+
+- Core script: `dns_toolkit.sh` (CLI, menu, testing, ranking, application)
+- Installer: `install.sh` (dependencies, directories, systemd units, bash completion)
+- Uninstaller: `uninstall.sh` (clean removal with optional purge)
+- Dataset: `dns_dataset.json` (providers, protocols, performance hints)
+- Config: `config.conf` (behavior tuning)
 
 ## Contributing
 
@@ -330,6 +414,11 @@ Do not create public issues for security vulnerabilities.
 - Atomic file operations
 - Backup before modifications
 - No external code execution
+
+### Compliance Notes
+
+- Designed for Ubuntu LTS releases with regular security maintenance
+- Works alongside Ubuntu security services; enabling ESM Apps is optional for broader package coverage
 
 ## Changelog
 

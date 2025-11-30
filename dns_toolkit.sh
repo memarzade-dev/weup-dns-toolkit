@@ -26,7 +26,7 @@ IFS=$'\n\t'
 # CONSTANTS & GLOBAL CONFIGURATION
 # ============================================================================
 
-readonly VERSION="2.0.0"
+readonly TOOLKIT_VERSION="2.0.0"
 readonly RELEASE_DATE="2025-01-15"
 readonly PROJECT_NAME="weup-dns-toolkit"
 readonly PROJECT_URL="https://github.com/weup-one/weup-dns-toolkit"
@@ -1624,7 +1624,7 @@ print_header() {
   ╚███╔███╔╝███████╗╚██████╔╝██║         ██████╔╝██║ ╚████║███████║
    ╚══╝╚══╝ ╚══════╝ ╚═════╝ ╚═╝         ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 EOF
-    printf "\n%b%s%b v%s\n" "${CYAN}" "  DNS Toolkit by WeUp.one" "${NC}" "${VERSION}"
+    printf "\n%b%s%b v%s\n" "${CYAN}" "  DNS Toolkit by WeUp.one" "${NC}" "${TOOLKIT_VERSION}"
     printf "%b  Professional DNS Management for Linux%b\n\n" "${DIM}" "${NC}"
 }
 
@@ -1869,7 +1869,7 @@ cmd_system_info() {
 
 print_help() {
     cat << EOF
-${PROJECT_NAME} v${VERSION} - Professional DNS Management for Linux
+${PROJECT_NAME} v${TOOLKIT_VERSION} - Professional DNS Management for Linux
 
 Usage: ${SCRIPT_NAME} [OPTIONS] [COMMAND]
 
@@ -1906,7 +1906,7 @@ EOF
 }
 
 print_version() {
-    printf "%s v%s (%s)\n" "${PROJECT_NAME}" "${VERSION}" "${RELEASE_DATE}"
+    printf "%s v%s (%s)\n" "${PROJECT_NAME}" "${TOOLKIT_VERSION}" "${RELEASE_DATE}"
     printf "Copyright (c) 2024-2025 WeUp.one Group\n"
     printf "License: MIT\n"
 }
@@ -2007,7 +2007,7 @@ main() {
     fi
     
     # Initialize
-    log_debug "Initializing ${PROJECT_NAME} v${VERSION}..."
+    log_debug "Initializing ${PROJECT_NAME} v${TOOLKIT_VERSION}..."
     
     check_ubuntu_compatibility || true
     create_directories
