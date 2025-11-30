@@ -45,7 +45,8 @@ readonly SYSTEM_CONFIG_DIR="/etc/${PROJECT_NAME}"
 # Default file locations (can be overridden)
 CONFIG_FILE="${CONFIG_FILE:-${CONFIG_DIR}/config.conf}"
 DNS_DATASET="${DNS_DATASET:-${SCRIPT_DIR}/dns_dataset.json}"
-LOG_FILE="${LOG_FILE:-/var/log/${PROJECT_NAME}.log}"
+LOG_DIR="${LOG_DIR:-/var/log/${PROJECT_NAME}}"
+LOG_FILE="${LOG_FILE:-${LOG_DIR}/weup-dns-$(date +%Y%m%d_%H%M%S).log}"
 BACKUP_DIR="${BACKUP_DIR:-/var/backups/${PROJECT_NAME}}"
 
 # Remote dataset URL for auto-update
@@ -97,13 +98,13 @@ init_logging() {
     
     if [[ ! -d "${log_dir}" ]]; then
         mkdir -p "${log_dir}" 2>/dev/null || {
-            LOG_FILE="/tmp/${PROJECT_NAME}.log"
+            LOG_FILE="/tmp/${PROJECT_NAME}-$(date +%Y%m%d_%H%M%S).log"
             log_dir="/tmp"
         }
     fi
     
     if [[ ! -w "${log_dir}" ]]; then
-        LOG_FILE="/tmp/${PROJECT_NAME}.log"
+        LOG_FILE="/tmp/${PROJECT_NAME}-$(date +%Y%m%d_%H%M%S).log"
     fi
     
     touch "${LOG_FILE}" 2>/dev/null || LOG_FILE="/dev/null"
