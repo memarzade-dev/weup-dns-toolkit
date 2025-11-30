@@ -1672,33 +1672,23 @@ print_status() {
 }
 
 show_menu() {
-    cat << 'EOF'
-================================================================
-
-  1. Auto-Optimize DNS (Recommended)
-  2. Iranian Anti-Sanction DNS
-  3. International DNS
-  4. Security-Focused DNS
-  5. Family-Safe DNS
-  6. Unfiltered DNS
-
-----------------------------------------------------------------
-
-  7. Test Current DNS
-  8. Benchmark All Categories
-  9. Show DNS Rankings
-
-----------------------------------------------------------------
-
-  10. Restore Previous DNS
-  11. Update DNS Dataset
-  12. System Information
-
-  0. Exit
-
-================================================================
-
-EOF
+    printf "%b================================================================%b\n\n" "${CYAN}" "${NC}"
+    printf "  %b1.%b  Auto-Optimize DNS (Recommended)\n" "${GREEN}" "${NC}"
+    printf "  %b2.%b  Iranian Anti-Sanction DNS\n" "${GREEN}" "${NC}"
+    printf "  %b3.%b  International DNS\n" "${GREEN}" "${NC}"
+    printf "  %b4.%b  Security-Focused DNS\n" "${GREEN}" "${NC}"
+    printf "  %b5.%b  Family-Safe DNS\n" "${GREEN}" "${NC}"
+    printf "  %b6.%b  Unfiltered DNS\n" "${GREEN}" "${NC}"
+    printf "\n%b----------------------------------------------------------------%b\n\n" "${CYAN}" "${NC}"
+    printf "  %b7.%b  Test Current DNS\n" "${YELLOW}" "${NC}"
+    printf "  %b8.%b  Benchmark All Categories\n" "${YELLOW}" "${NC}"
+    printf "  %b9.%b  Show DNS Rankings\n" "${YELLOW}" "${NC}"
+    printf "\n%b----------------------------------------------------------------%b\n\n" "${CYAN}" "${NC}"
+    printf "  %b10.%b Restore Previous DNS\n" "${BLUE}" "${NC}"
+    printf "  %b11.%b Update DNS Dataset\n" "${BLUE}" "${NC}"
+    printf "  %b12.%b System Information\n" "${BLUE}" "${NC}"
+    printf "\n  %b0.%b  Exit\n\n" "${RED}" "${NC}"
+    printf "%b================================================================%b\n\n" "${CYAN}" "${NC}"
 }
 
 interactive_menu() {
@@ -1803,7 +1793,7 @@ cmd_benchmark() {
     local -a categories=("iranian" "international" "security" "family_safe" "unfiltered")
     
     for category in "${categories[@]}"; do
-        printf "\nTesting %s...\n" "${category}"
+        printf "\n%b  Testing %s...%b\n" "${BLUE}" "${category}" "${NC}"
         select_best_dns "${category}" >/dev/null 2>&1 || true
     done
     
