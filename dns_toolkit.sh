@@ -64,6 +64,9 @@ readonly MIN_SUCCESS_RATE="0.60"
 readonly EXCELLENT_LATENCY_MS=50
 readonly GOOD_LATENCY_MS=100
 readonly ACCEPTABLE_LATENCY_MS=200
+PREFERRED_CATEGORY="${PREFERRED_CATEGORY:-iranian}"
+AUTO_FALLBACK="${AUTO_FALLBACK:-true}"
+FALLBACK_DNS="${FALLBACK_DNS:-1.1.1.1 8.8.8.8}"
 
 # System paths
 readonly RESOLV_CONF="/etc/resolv.conf"
@@ -82,6 +85,7 @@ declare -i VERBOSE_MODE=0
 declare -i DRY_RUN_MODE=0
 declare -i FORCE_MODE=0
 declare -i QUIET_MODE=0
+declare -a FALLBACK_DNS_LIST=()
 
 # ============================================================================
 # LOGGING SUBSYSTEM
@@ -103,6 +107,19 @@ init_logging() {
     fi
     
     touch "${LOG_FILE}" 2>/dev/null || LOG_FILE="/dev/null"
+}
+
+load_config() {
+    if [[ -f "${SYSTEM_CONFIG_DIR}/config.conf" ]]; then
+        set -a
+        . "${SYSTEM_CONFIG_DIR}/config.conf" 2>/dev/null || true
+        set +a
+    elif [[ -f "${CONFIG_FILE}" ]]; then
+        set -a
+        . "${CONFIG_FILE}" 2>/dev/null || true
+        set +a
+    fi
+    read -ra FALLBACK_DNS_LIST <<< "${FALLBACK_DNS}"
 }
 
 log() {
@@ -1089,6 +1106,23 @@ select_best_dns() {
     rankings="$(rank_dns_servers)"
     
     if [[ -z "${rankings}" ]]; then
+        if [[ "${AUTO_FALLBACK}" == "true" && "${category}" != "international" ]]; then
+            log_warn "No working DNS in ${category}. Trying international fallback."
+            if select_best_dns "international" >/dev/null 2>&1; then
+                local fb
+                fb="$(select_best_dns "international")"
+                printf '%s' "${fb}"
+                return 0
+            fi
+        fi
+        if [[ ${#FALLBACK_DNS_LIST[@]} -gt 0 ]]; then
+            for ip in "${FALLBACK_DNS_LIST[@]}"; do
+                if test_dns_latency "${ip}" "google.com" "${DNS_TEST_TIMEOUT}" >/dev/null 2>&1; then
+                    printf '%s' "Fallback ${ip}"
+                    return 0
+                fi
+            done
+        fi
         log_error "No working DNS servers found in category: ${category}"
         return 1
     fi
@@ -1406,6 +1440,16 @@ apply_dns() {
     # Get DNS IPs for this provider
     local -a dns_ips=()
     mapfile -t dns_ips < <(get_dns_ips "${dns_name}")
+    if [[ ${#dns_ips[@]} -eq 0 ]]; then
+        local -a tokens=()
+        read -ra tokens <<< "${dns_name//,/ }"
+        dns_ips=()
+        for t in "${tokens[@]}"; do
+            if validate_ip "${t}"; then
+                dns_ips+=("${t}")
+            fi
+        done
+    fi
     
     if [[ ${#dns_ips[@]} -eq 0 ]]; then
         error_exit "No IP addresses found for DNS: ${dns_name}" 1
@@ -1892,6 +1936,7 @@ print_version() {
 main() {
     # Initialize logging first
     init_logging
+    load_config
     
     # Parse command line arguments
     local command=""
