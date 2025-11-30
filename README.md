@@ -1,6 +1,6 @@
 # WeUp DNS Toolkit
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/weup-one/weup-dns-toolkit)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/memarzade-dev/weup-dns-toolkit)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Ubuntu](https://img.shields.io/badge/ubuntu-18.04%20|%2020.04%20|%2022.04%20|%2024.04-orange.svg)](https://ubuntu.com)
 [![Bash](https://img.shields.io/badge/bash-5.0+-brightgreen.svg)](https://www.gnu.org/software/bash/)
@@ -35,7 +35,7 @@ WeUp DNS Toolkit is a production-ready DNS management solution designed for Ubun
 
 ```bash
 # Clone the repository
-git clone https://github.com/weup-one/weup-dns-toolkit.git
+git clone https://github.com/memarzade-dev/weup-dns-toolkit.git
 cd weup-dns-toolkit
 
 # Install (requires root)
@@ -363,7 +363,7 @@ sudo weup-dns --auto
 
 ```bash
 # Clone repository
-git clone https://github.com/weup-one/weup-dns-toolkit.git
+git clone https://github.com/memarzade-dev/weup-dns-toolkit.git
 cd weup-dns-toolkit
 
 # Validate JSON dataset
@@ -436,10 +436,10 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) for deta
 
 ## Support
 
-- **Documentation**: [https://github.com/weup-one/weup-dns-toolkit/wiki](https://github.com/weup-one/weup-dns-toolkit/wiki)
-- **Issues**: [https://github.com/weup-one/weup-dns-toolkit/issues](https://github.com/weup-one/weup-dns-toolkit/issues)
+- **Documentation**: [https://github.com/memarzade-dev/weup-dns-toolkit/wiki](https://github.com/memarzade-dev/weup-dns-toolkit/wiki)
+- **Issues**: [https://github.com/memarzade-dev/weup-dns-toolkit/issues](https://github.com/memarzade-dev/weup-dns-toolkit/issues)
 - **Email**: support@weup.one
 
 ---
 
-**Made with ❤️ by [WeUp.one Group](https://weup.one)**
+**Made with love by [WeUp.one Group](https://weup.one)**

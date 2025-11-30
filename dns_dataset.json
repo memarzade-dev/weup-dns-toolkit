@@ -14,7 +14,7 @@
     },
     "protocols_supported": ["DNS", "DoH", "DoT", "DoQ", "DNSCrypt"],
     "maintainer": "WeUp.one Group",
-    "repository": "https://github.com/weup-one/weup-dns-toolkit",
+    "repository": "https://github.com/memarzade-dev/weup-dns-toolkit",
     "license": "MIT"
   },
   "test_domains": {

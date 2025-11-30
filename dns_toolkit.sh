@@ -29,7 +29,7 @@ IFS=$'\n\t'
 readonly TOOLKIT_VERSION="2.0.0"
 readonly RELEASE_DATE="2025-01-15"
 readonly PROJECT_NAME="weup-dns-toolkit"
-readonly PROJECT_URL="https://github.com/weup-one/weup-dns-toolkit"
+readonly PROJECT_URL="https://github.com/memarzade-dev/weup-dns-toolkit"
 
 # Script paths (resolved at runtime)
 readonly SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
@@ -49,7 +49,7 @@ LOG_FILE="${LOG_FILE:-/var/log/${PROJECT_NAME}.log}"
 BACKUP_DIR="${BACKUP_DIR:-/var/backups/${PROJECT_NAME}}"
 
 # Remote dataset URL for auto-update
-readonly REMOTE_DATASET_URL="https://raw.githubusercontent.com/weup-one/weup-dns-toolkit/main/dns_dataset.json"
+readonly REMOTE_DATASET_URL="https://raw.githubusercontent.com/memarzade-dev/weup-dns-toolkit/main/dns_dataset.json"
 
 # Network configuration
 readonly DNS_TEST_TIMEOUT=5
@@ -72,22 +72,8 @@ readonly SYSTEMD_RESOLVED_DROP_IN="/etc/systemd/resolved.conf.d"
 readonly NETPLAN_DIR="/etc/netplan"
 readonly NM_CONF_DIR="/etc/NetworkManager/conf.d"
 
-# Terminal colors (with fallback for non-interactive shells)
-if [[ -t 1 ]]; then
-    readonly RED='\033[0;31m'
-    readonly GREEN='\033[0;32m'
-    readonly YELLOW='\033[1;33m'
-    readonly BLUE='\033[0;34m'
-    readonly CYAN='\033[0;36m'
-    readonly MAGENTA='\033[0;35m'
-    readonly WHITE='\033[1;37m'
-    readonly BOLD='\033[1m'
-    readonly DIM='\033[2m'
-    readonly NC='\033[0m'
-else
-    readonly RED='' GREEN='' YELLOW='' BLUE='' CYAN=''
-    readonly MAGENTA='' WHITE='' BOLD='' DIM='' NC=''
-fi
+readonly RED='' GREEN='' YELLOW='' BLUE='' CYAN=''
+readonly MAGENTA='' WHITE='' BOLD='' DIM='' NC=''
 
 # Runtime state (minimized global state)
 declare -A DNS_TEST_RESULTS=()
@@ -140,22 +126,22 @@ log() {
     
     case "${level}" in
         ERROR)
-            printf "%b✗ %s%b\n" "${RED}" "${message}" "${NC}" >&2
+            printf "[ERROR] %s\n" "${message}" >&2
             ;;
         WARN)
-            printf "%b⚠ %s%b\n" "${YELLOW}" "${message}" "${NC}" >&2
+            printf "[WARN] %s\n" "${message}" >&2
             ;;
         INFO)
-            printf "%b✓ %s%b\n" "${GREEN}" "${message}" "${NC}"
+            printf "[INFO] %s\n" "${message}"
             ;;
         DEBUG)
             if [[ ${VERBOSE_MODE} -eq 1 ]]; then
-                printf "%b▸ %s%b\n" "${BLUE}" "${message}" "${NC}"
+                printf "[DEBUG] %s\n" "${message}"
             fi
             ;;
         TRACE)
             if [[ ${VERBOSE_MODE} -ge 2 ]]; then
-                printf "%b· %s%b\n" "${DIM}" "${message}" "${NC}"
+                printf "[TRACE] %s\n" "${message}"
             fi
             ;;
     esac
@@ -920,10 +906,10 @@ test_critical_services() {
     for domain in "${critical_domains[@]}"; do
         if test_dns_latency "${dns_ip}" "${domain}" "${DNS_TEST_TIMEOUT}" >/dev/null 2>&1; then
             passed_services+=("${domain}")
-            log_debug "  ✓ ${domain}"
+            log_debug "  OK ${domain}"
         else
             failed_services+=("${domain}")
-            log_warn "  ✗ ${domain}"
+            log_warn "  FAIL ${domain}"
         fi
     done
     
@@ -1615,17 +1601,16 @@ print_header() {
     fi
     
     clear
-    cat << 'EOF'
+    cat << EOF
 
-  ██╗    ██╗███████╗██╗   ██╗██████╗     ██████╗ ███╗   ██╗███████╗
-  ██║    ██║██╔════╝██║   ██║██╔══██╗    ██╔══██╗████╗  ██║██╔════╝
-  ██║ █╗ ██║█████╗  ██║   ██║██████╔╝    ██║  ██║██╔██╗ ██║███████╗
-  ██║███╗██║██╔══╝  ██║   ██║██╔═══╝     ██║  ██║██║╚██╗██║╚════██║
-  ╚███╔███╔╝███████╗╚██████╔╝██║         ██████╔╝██║ ╚████║███████║
-   ╚══╝╚══╝ ╚══════╝ ╚═════╝ ╚═╝         ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+============================
+WeUp DNS Toolkit
+============================
+
+Version: ${TOOLKIT_VERSION}
+Professional DNS Management for Linux
+
 EOF
-    printf "\n%b%s%b v%s\n" "${CYAN}" "  DNS Toolkit by WeUp.one" "${NC}" "${TOOLKIT_VERSION}"
-    printf "%b  Professional DNS Management for Linux%b\n\n" "${DIM}" "${NC}"
 }
 
 print_status() {
@@ -1642,31 +1627,31 @@ print_status() {
 }
 
 show_menu() {
-    cat << EOF
-${CYAN}═══════════════════════════════════════════════════════════════${NC}
+    cat << 'EOF'
+================================================================
 
-  ${GREEN}1.${NC}  🚀  Auto-Optimize DNS (Recommended)
-  ${GREEN}2.${NC}  🇮🇷  Iranian Anti-Sanction DNS
-  ${GREEN}3.${NC}  🌍  International DNS
-  ${GREEN}4.${NC}  🔒  Security-Focused DNS
-  ${GREEN}5.${NC}  👨‍👩‍👧‍👦  Family-Safe DNS
-  ${GREEN}6.${NC}  🔓  Unfiltered DNS
+  1. Auto-Optimize DNS (Recommended)
+  2. Iranian Anti-Sanction DNS
+  3. International DNS
+  4. Security-Focused DNS
+  5. Family-Safe DNS
+  6. Unfiltered DNS
 
-${CYAN}───────────────────────────────────────────────────────────────${NC}
+----------------------------------------------------------------
 
-  ${YELLOW}7.${NC}  🧪  Test Current DNS
-  ${YELLOW}8.${NC}  📊  Benchmark All Categories
-  ${YELLOW}9.${NC}  📋  Show DNS Rankings
+  7. Test Current DNS
+  8. Benchmark All Categories
+  9. Show DNS Rankings
 
-${CYAN}───────────────────────────────────────────────────────────────${NC}
+----------------------------------------------------------------
 
-  ${BLUE}10.${NC} 🔄  Restore Previous DNS
-  ${BLUE}11.${NC} ⬆️   Update DNS Dataset
-  ${BLUE}12.${NC} ⚙️   System Information
+  10. Restore Previous DNS
+  11. Update DNS Dataset
+  12. System Information
 
-  ${RED}0.${NC}  🚪  Exit
+  0. Exit
 
-${CYAN}═══════════════════════════════════════════════════════════════${NC}
+================================================================
 
 EOF
 }
@@ -1767,13 +1752,13 @@ cmd_test_current() {
 }
 
 cmd_benchmark() {
-    printf "\n%b  Benchmarking all DNS categories...%b\n" "${CYAN}" "${NC}"
-    printf "%b  This may take several minutes...%b\n\n" "${YELLOW}" "${NC}"
+    printf "\nBenchmarking all DNS categories...\n"
+    printf "This may take several minutes...\n\n"
     
     local -a categories=("iranian" "international" "security" "family_safe" "unfiltered")
     
     for category in "${categories[@]}"; do
-        printf "\n%b  Testing %s...%b\n" "${BLUE}" "${category}" "${NC}"
+        printf "\nTesting %s...\n" "${category}"
         select_best_dns "${category}" >/dev/null 2>&1 || true
     done
     
@@ -1781,28 +1766,21 @@ cmd_benchmark() {
 }
 
 cmd_show_rankings() {
-    printf "\n%b  DNS Server Rankings%b\n" "${CYAN}" "${NC}"
-    printf "  ════════════════════════════════════════════════════════\n\n"
+    printf "\nDNS Server Rankings\n"
+    printf "  =========================================================\n\n"
     
     local rankings
     rankings="$(rank_dns_servers)"
     
     if [[ -z "${rankings}" ]]; then
-        printf "  %bNo benchmark data available. Run benchmark first.%b\n" "${YELLOW}" "${NC}"
+        printf "  No benchmark data available. Run benchmark first.\n"
     else
         printf "  %-5s %-30s %-12s %-10s\n" "RANK" "DNS NAME" "SUCCESS" "LATENCY"
-        printf "  ──────────────────────────────────────────────────────────\n"
+        printf "  ----------------------------------------------------------\n"
         
         local -i rank=1
         while IFS='|' read -r score name rate latency; do
-            local color="${NC}"
-            if [[ ${rank} -eq 1 ]]; then
-                color="${GREEN}"
-            elif [[ ${rank} -le 3 ]]; then
-                color="${YELLOW}"
-            fi
-            
-            printf "  %b%-5s %-30s %-12s %-10s%b\n" "${color}" "#${rank}" "${name}" "${rate}" "${latency}ms" "${NC}"
+            printf "  %-5s %-30s %-12s %-10s\n" "#${rank}" "${name}" "${rate}" "${latency}ms"
             ((rank++))
             
             [[ ${rank} -gt 20 ]] && break
@@ -1819,9 +1797,9 @@ cmd_restore() {
     
     if [[ "${confirm}" =~ ^[Yy]$ ]]; then
         restore_dns
-        printf "\n%b  ✓ DNS configuration restored%b\n" "${GREEN}" "${NC}"
+        printf "\nOK DNS configuration restored\n"
     else
-        printf "\n%b  Cancelled%b\n" "${YELLOW}" "${NC}"
+        printf "\nCancelled\n"
     fi
     
     printf "\n  Press Enter to continue..."
@@ -1829,7 +1807,7 @@ cmd_restore() {
 }
 
 cmd_update_dataset() {
-    printf "\n%b  Updating DNS dataset...%b\n\n" "${CYAN}" "${NC}"
+    printf "\nUpdating DNS dataset...\n\n"
     
     update_dns_dataset
     
@@ -1838,8 +1816,8 @@ cmd_update_dataset() {
 }
 
 cmd_system_info() {
-    printf "\n%b  System Information%b\n" "${CYAN}" "${NC}"
-    printf "  ════════════════════════════════════════════════════════\n\n"
+    printf "\nSystem Information\n"
+    printf "  =========================================================\n\n"
     
     local os_info
     os_info="$(detect_os)"
@@ -1853,7 +1831,7 @@ cmd_system_info() {
     printf "  %-20s %s\n" "DNS Manager:" "$(detect_dns_manager)"
     printf "  %-20s %s\n" "Current DNS:" "$(get_current_dns 2>/dev/null || echo 'unknown')"
     printf "\n"
-    printf "  %-20s %s\n" "Script Version:" "${VERSION}"
+    printf "  %-20s %s\n" "Script Version:" "${TOOLKIT_VERSION}"
     printf "  %-20s %s\n" "Dataset Version:" "$(jq -r '.version // "N/A"' "${DNS_DATASET}" 2>/dev/null)"
     printf "  %-20s %s\n" "Config Dir:" "${CONFIG_DIR}"
     printf "  %-20s %s\n" "Data Dir:" "${DATA_DIR}"

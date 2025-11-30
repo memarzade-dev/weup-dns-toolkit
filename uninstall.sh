@@ -32,16 +32,7 @@ readonly LOG_FILE="/var/log/${PROJECT_NAME}.log"
 readonly SYSTEMD_DIR="/etc/systemd/system"
 readonly COMPLETION_DIR="/etc/bash_completion.d"
 
-# Terminal colors
-if [[ -t 1 ]]; then
-    readonly RED='\033[0;31m'
-    readonly GREEN='\033[0;32m'
-    readonly YELLOW='\033[1;33m'
-    readonly CYAN='\033[0;36m'
-    readonly NC='\033[0m'
-else
-    readonly RED='' GREEN='' YELLOW='' CYAN='' NC=''
-fi
+readonly RED='' GREEN='' YELLOW='' CYAN='' NC=''
 
 # Options
 PURGE_ALL=0
@@ -54,15 +45,15 @@ QUIET=0
 
 log_info() {
     [[ ${QUIET} -eq 1 ]] && return
-    printf "%b[INFO]%b %s\n" "${GREEN}" "${NC}" "$*"
+    printf "[INFO] %s\n" "$*"
 }
 
 log_warn() {
-    printf "%b[WARN]%b %s\n" "${YELLOW}" "${NC}" "$*" >&2
+    printf "[WARN] %s\n" "$*" >&2
 }
 
 log_error() {
-    printf "%b[ERROR]%b %s\n" "${RED}" "${NC}" "$*" >&2
+    printf "[ERROR] %s\n" "$*" >&2
 }
 
 die() {
@@ -173,14 +164,14 @@ print_header() {
     [[ ${QUIET} -eq 1 ]] && return
     
     echo ""
-    echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║         WeUp DNS Toolkit - Uninstaller v${TOOLKIT_VERSION}           ║"
-    echo "╚════════════════════════════════════════════════════════════╝"
+    echo "============================================================="
+    echo "WeUp DNS Toolkit - Uninstaller v${TOOLKIT_VERSION}"
+    echo "============================================================="
     echo ""
 }
 
 print_what_will_be_removed() {
-    echo "The following will be ${RED}REMOVED${NC}:"
+    echo "The following will be REMOVED:"
     echo ""
     [[ -d "${INSTALL_DIR}" ]] && echo "  • ${INSTALL_DIR}"
     [[ -L "${BIN_DIR}/weup-dns" ]] && echo "  • ${BIN_DIR}/weup-dns"
@@ -199,7 +190,7 @@ print_what_will_be_removed() {
     echo ""
     
     if [[ ${PURGE_ALL} -eq 0 ]]; then
-        echo "The following will be ${GREEN}PRESERVED${NC}:"
+        echo "The following will be PRESERVED:"
         echo ""
         [[ -d "${CONFIG_DIR}" ]] && echo "  • ${CONFIG_DIR} (configuration)"
         [[ -d "${BACKUP_DIR}" ]] && echo "  • ${BACKUP_DIR} (DNS backups)"
@@ -222,9 +213,9 @@ confirm_uninstall() {
 
 print_success() {
     echo ""
-    echo "════════════════════════════════════════════════════════════════"
-    printf "%b  Uninstallation complete!%b\n" "${GREEN}" "${NC}"
-    echo "════════════════════════════════════════════════════════════════"
+    echo "============================================================="
+    echo "Uninstallation complete!"
+    echo "============================================================="
     echo ""
     
     if [[ ${PURGE_ALL} -eq 0 ]]; then

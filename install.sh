@@ -37,37 +37,26 @@ readonly SYSTEMD_DIR="/etc/systemd/system"
 # Source directory (where install.sh is located)
 readonly SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Terminal colors
-if [[ -t 1 ]]; then
-    readonly RED='\033[0;31m'
-    readonly GREEN='\033[0;32m'
-    readonly YELLOW='\033[1;33m'
-    readonly BLUE='\033[0;34m'
-    readonly CYAN='\033[0;36m'
-    readonly BOLD='\033[1m'
-    readonly NC='\033[0m'
-else
-    readonly RED='' GREEN='' YELLOW='' BLUE='' CYAN='' BOLD='' NC=''
-fi
+readonly RED='' GREEN='' YELLOW='' BLUE='' CYAN='' BOLD='' NC=''
 
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
 
 log_info() {
-    printf "%b[INFO]%b %s\n" "${GREEN}" "${NC}" "$*"
+    printf "[INFO] %s\n" "$*"
 }
 
 log_warn() {
-    printf "%b[WARN]%b %s\n" "${YELLOW}" "${NC}" "$*" >&2
+    printf "[WARN] %s\n" "$*" >&2
 }
 
 log_error() {
-    printf "%b[ERROR]%b %s\n" "${RED}" "${NC}" "$*" >&2
+    printf "[ERROR] %s\n" "$*" >&2
 }
 
 log_step() {
-    printf "\n%b━━━ %s%b\n" "${CYAN}" "$*" "${NC}"
+    printf "\n--- %s\n" "$*"
 }
 
 die() {
@@ -222,9 +211,9 @@ verify_dependencies() {
     
     for cmd in "${required_commands[@]}"; do
         if command_exists "${cmd}"; then
-            log_info "✓ ${cmd}"
+            log_info "OK ${cmd}"
         else
-            log_error "✗ ${cmd} - NOT FOUND"
+            log_error "MISSING ${cmd} - NOT FOUND"
             missing=1
         fi
     done
@@ -305,7 +294,7 @@ install_systemd_service() {
     cat > "${SYSTEMD_DIR}/${PROJECT_NAME}.service" << 'EOF'
 [Unit]
 Description=WeUp DNS Toolkit - Automatic DNS Optimization
-Documentation=https://github.com/weup-one/weup-dns-toolkit
+Documentation=https://github.com/memarzade-dev/weup-dns-toolkit
 After=network-online.target
 Wants=network-online.target
 
@@ -327,7 +316,7 @@ EOF
     cat > "${SYSTEMD_DIR}/${PROJECT_NAME}.timer" << 'EOF'
 [Unit]
 Description=WeUp DNS Toolkit - Periodic DNS Check
-Documentation=https://github.com/weup-one/weup-dns-toolkit
+Documentation=https://github.com/memarzade-dev/weup-dns-toolkit
 
 [Timer]
 OnBootSec=2min
@@ -481,7 +470,7 @@ verify_installation() {
     
     # Check main script
     if [[ -x "${INSTALL_DIR}/${SCRIPT_NAME}" ]]; then
-        log_info "✓ Main script installed"
+        log_info "OK Main script installed"
     else
         log_error "✗ Main script not found or not executable"
         ((errors++))
@@ -490,7 +479,7 @@ verify_installation() {
     # Check dataset
     if [[ -f "${INSTALL_DIR}/${DATASET_NAME}" ]]; then
         if jq empty "${INSTALL_DIR}/${DATASET_NAME}" 2>/dev/null; then
-            log_info "✓ DNS dataset valid"
+            log_info "OK DNS dataset valid"
         else
             log_error "✗ DNS dataset is invalid JSON"
             ((errors++))
@@ -502,7 +491,7 @@ verify_installation() {
     
     # Check symlinks
     if [[ -L "${BIN_DIR}/weup-dns" ]]; then
-        log_info "✓ Symlink weup-dns created"
+        log_info "OK Symlink weup-dns created"
     else
         log_error "✗ Symlink weup-dns not found"
         ((errors++))
@@ -510,14 +499,14 @@ verify_installation() {
     
     # Check systemd
     if [[ -f "${SYSTEMD_DIR}/${PROJECT_NAME}.service" ]]; then
-        log_info "✓ Systemd service installed"
+        log_info "OK Systemd service installed"
     else
         log_warn "⚠ Systemd service not found"
     fi
     
     # Test execution
     if "${BIN_DIR}/weup-dns" --version &>/dev/null; then
-        log_info "✓ Script executes successfully"
+        log_info "OK Script executes successfully"
     else
         log_error "✗ Script execution failed"
         ((errors++))
@@ -529,25 +518,25 @@ verify_installation() {
 print_success() {
     cat << EOF
 
-${GREEN}════════════════════════════════════════════════════════════════${NC}
-${GREEN}           WeUp DNS Toolkit v${VERSION} Installed Successfully!${NC}
-${GREEN}════════════════════════════════════════════════════════════════${NC}
+===============================================================
+WeUp DNS Toolkit v${TOOLKIT_VERSION} Installed Successfully!
+===============================================================
 
-${CYAN}Usage:${NC}
-  ${BOLD}weup-dns${NC}                    Interactive menu
-  ${BOLD}weup-dns --auto${NC}             Auto-optimize DNS
-  ${BOLD}weup-dns --iranian${NC}          Use Iranian anti-sanction DNS
-  ${BOLD}weup-dns --test${NC}             Test current DNS
-  ${BOLD}weup-dns --help${NC}             Show all options
+Usage:
+  weup-dns                    Interactive menu
+  weup-dns --auto             Auto-optimize DNS
+  weup-dns --iranian          Use Iranian anti-sanction DNS
+  weup-dns --test             Test current DNS
+  weup-dns --help             Show all options
 
-${CYAN}Automatic optimization:${NC}
-  ${BOLD}sudo systemctl enable --now ${PROJECT_NAME}.timer${NC}
+Automatic optimization:
+  sudo systemctl enable --now ${PROJECT_NAME}.timer
 
-${CYAN}Uninstall:${NC}
-  ${BOLD}sudo ${INSTALL_DIR}/uninstall.sh${NC}
+Uninstall:
+  sudo ${INSTALL_DIR}/uninstall.sh
 
-${CYAN}Documentation:${NC}
-  https://github.com/weup-one/weup-dns-toolkit
+Documentation:
+  https://github.com/memarzade-dev/weup-dns-toolkit
 
 EOF
 }
@@ -558,9 +547,9 @@ EOF
 
 main() {
     echo ""
-    echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║       WeUp DNS Toolkit v${TOOLKIT_VERSION} - Installation            ║"
-    echo "╚════════════════════════════════════════════════════════════╝"
+    echo "============================================================="
+    echo "WeUp DNS Toolkit v${TOOLKIT_VERSION} - Installation"
+    echo "============================================================="
     echo ""
     
     check_root
