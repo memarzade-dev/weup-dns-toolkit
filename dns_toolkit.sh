@@ -1646,16 +1646,11 @@ print_header() {
     fi
     
     clear
-    cat << EOF
-
-============================
-WeUp DNS Toolkit
-============================
-
-Version: ${TOOLKIT_VERSION}
-Professional DNS Management for Linux
-
-EOF
+    printf "\n%b============================================================%b\n" "${CYAN}" "${NC}"
+    printf "  %bWeUp DNS Toolkit%b\n" "${BOLD}${WHITE}" "${NC}"
+    printf "%b============================================================%b\n\n" "${CYAN}" "${NC}"
+    printf "  %bVersion:%b %s\n" "${BLUE}" "${NC}" "${TOOLKIT_VERSION}"
+    printf "  Professional DNS Management for Linux\n\n"
 }
 
 print_status() {
